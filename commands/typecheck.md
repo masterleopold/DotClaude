@@ -6,33 +6,126 @@ description: Check codebase for TypeScript type errors and report findings
 
 Check the codebase for TypeScript type errors: $ARGUMENTS
 
+## Quick Commands
+
+### ⭐ **Recommended for Next.js/React Projects**
+
+```bash
+# MOST ACCURATE: Next.js build (handles JSX correctly)
+npm run build
+
+# Development type checking (if available)
+npm run typecheck || npx tsc --noEmit
+
+# Alternative for large codebases with timeout issues
+npx tsc --noEmit --skipLibCheck --incremental
+```
+
+### 🔧 **Targeted Type Checking**
+
+```bash
+# Check specific directories (faster for large projects)
+npx tsc --noEmit src/lib/**/*.ts --skipLibCheck
+npx tsc --noEmit src/utils/**/*.ts --skipLibCheck
+
+# Non-JSX files (avoid JSX compilation issues)
+find src -name "*.ts" -not -path "*/node_modules/*" | xargs npx tsc --noEmit --skipLibCheck
+
+# Check with JSX handling for React
+npx tsc --noEmit --skipLibCheck --jsx react-jsx
+```
+
+### 📊 **Diagnostic Commands**
+
+```bash
+# Count TypeScript files
+find . -name "*.ts" -o -name "*.tsx" | grep -v node_modules | wc -l
+
+# Check tsconfig.json configuration
+cat tsconfig.json | jq '.compilerOptions | {jsx, moduleResolution, paths}'
+```
+
+## ⚠️ **Critical: JSX Compilation in Next.js/React**
+
+### **Expected False Positives:**
+- ❌ **Direct `npx tsc`**: Shows hundreds/thousands of JSX errors
+- ✅ **Next.js `npm run build`**: Handles JSX correctly via build pipeline
+- ⚠️ **Reason**: TypeScript CLI doesn't use framework-specific JSX transforms
+
+### **Error Categories:**
+
+#### 1. **JSX Errors (FALSE POSITIVES)**
+```
+Cannot use JSX unless the '--jsx' flag is provided
+```
+**Status**: ✅ Expected in Next.js projects when using `npx tsc` directly
+
+#### 2. **Module Resolution (REAL ISSUES)**
+```
+Cannot find module '@/utils/api'
+Cannot find module '@/components/ui/button'
+```
+**Status**: 🔴 Requires investigation - check path aliases and file structure
+
+#### 3. **React Import Issues (CONFIG ISSUE)**
+```
+Module can only be default-imported using the 'esModuleInterop' flag
+```
+**Status**: 🟡 Check tsconfig.json for `esModuleInterop: true`
+
+### **Resolution Strategy:**
+```bash
+# 1. FIRST: Test actual build (most reliable)
+npm run build
+
+# 2. IF build fails: Check environment
+npm run validate:env  # (Emergen-specific)
+
+# 3. IF build succeeds but tsc fails: JSX issues are expected
+echo "JSX errors in direct tsc are normal for Next.js projects"
+
+# 4. Focus on non-JSX files for pure TypeScript checking  
+npx tsc --noEmit src/lib src/utils src/types --skipLibCheck
+```
+
 ## Approach
-Systematically check the codebase for TypeScript compilation errors and provide detailed reporting of any issues found.
+Systematically check the codebase for TypeScript compilation errors with framework-aware strategy.
 
-## Steps to follow:
+## Updated Workflow:
 
-1. **Detect project configuration**
-   - Check for tsconfig.json and project setup
-   - Identify TypeScript files in the codebase
-   - Determine the appropriate type checking strategy
+### 1. **Project Detection & Strategy**
+```bash
+# Detect framework type
+ls next.config.* package.json tsconfig.json
 
-2. **Run comprehensive type checking**
-   - Execute `npx tsc --noEmit` for full type checking
-   - If specific files/directories provided, focus on those areas
-   - Capture all type errors and warnings
+# Count codebase size for timeout considerations
+find . -name "*.ts" -o -name "*.tsx" | grep -v node_modules | wc -l
+```
 
-3. **Analyze and categorize errors**
-   - Group errors by file and type
-   - Identify the most common error patterns
-   - Prioritize critical vs. minor issues
+### 2. **Framework-Appropriate Type Checking**
+- **Next.js/React**: Prioritize `npm run build` over direct `tsc`
+- **Node.js/Library**: Use `npx tsc --noEmit` directly
+- **Large codebases (1000+ files)**: Use targeted/incremental approaches
 
-4. **Report findings**
-   - Provide summary of total errors found
-   - List errors by file with line numbers
-   - Suggest potential fixes for common issues
-   - Recommend next steps for resolution
+### 3. **Error Categorization**
+- **JSX Issues**: Identify as false positives for React projects
+- **Module Resolution**: Flag as real issues requiring investigation
+- **Import/Export**: Check configuration issues
+- **Type Definitions**: Verify dependency types
 
-5. **Additional checks**
-   - Verify package.json scripts for type checking
-   - Check for any eslint or other linting errors that might be related
-   - Ensure all dependencies have proper type definitions
+### 4. **Intelligent Reporting**
+- **For React/Next.js**: Emphasize build results over direct tsc
+- **Timeout Handling**: Provide alternative strategies for large codebases
+- **False Positive Filtering**: Separate framework-specific issues
+
+### 5. **Actionable Recommendations**
+- **Primary**: Framework build process results
+- **Secondary**: Targeted type checking for specific areas
+- **Configuration**: Suggest tsconfig.json improvements
+- **Dependencies**: Identify missing type definitions
+
+### 6. **Performance Considerations**
+- **Incremental compilation** for large projects
+- **Selective directory checking** to avoid timeouts
+- **Skip lib checks** for faster execution
+- **Parallel checking** where possible
