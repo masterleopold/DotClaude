@@ -1,5 +1,5 @@
 {
-  "model": "opusplan"
+  "model": "opusplan",
   "permissions": {
     "allow": [
       // バージョン管理
