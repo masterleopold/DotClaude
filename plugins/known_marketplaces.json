@@ -1,0 +1,58 @@
+{
+  "claude-code-plugins": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-code"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/claude-code-plugins",
+    "lastUpdated": "2026-02-01T14:53:06.199Z"
+  },
+  "anthropic-agent-skills": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/skills"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/anthropic-agent-skills",
+    "lastUpdated": "2026-01-31T12:45:02.601Z"
+  },
+  "context7-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "upstash/context7"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/context7-marketplace",
+    "lastUpdated": "2026-01-31T12:45:19.947Z"
+  },
+  "playwright-cli": {
+    "source": {
+      "source": "github",
+      "repo": "microsoft/playwright-cli"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/playwright-cli",
+    "lastUpdated": "2026-01-31T12:45:51.841Z"
+  },
+  "prompts.chat": {
+    "source": {
+      "source": "github",
+      "repo": "f/prompts.chat"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/prompts.chat",
+    "lastUpdated": "2026-01-31T12:47:10.975Z"
+  },
+  "superpowers-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "obra/superpowers-marketplace"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/superpowers-marketplace",
+    "lastUpdated": "2026-02-01T13:40:29.462Z"
+  },
+  "claude-plugins-official": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/anthropics/claude-plugins-official.git"
+    },
+    "installLocation": "/Users/yoichirohara/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-02-01T14:53:11.813Z"
+  }
+}

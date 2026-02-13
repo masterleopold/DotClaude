@@ -1,48 +1,80 @@
 {
-  "model": "opusplan",
-  "permissions": {
-    "allow": [
-      // バージョン管理
-      "Bash(git:*)",
-      
-      // ファイル操作
-      "Bash(ls:*)",
-      "Bash(cat:*)",
-      "Bash(pwd:*)",
-      "Bash(cd:*)",
-      
-      // 検索系
-      "Bash(find:*)",
-      "Bash(grep:*)",
-      "Bash(rg:*)",     // ripgrep（高速検索）
-      
-      // 開発ツール
-      "Bash(npm:*)",
-      "Bash(node:*)",
-      "Bash(python:*)",
-      "Bash(make:*)",
-      
-      // ユーティリティ
-      "Bash(jq:*)",     // JSON処理
-      "Bash(curl:*)",   // API通信
-      "Bash(echo:*)",   // 出力確認
-      
-      // デプロイ関連
-      "Bash(vercel:*)", // Vercel CLI
-      "Bash(gh:*)",     // GitHub CLI
-      
-      // Web参照
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:vercel.com)",
-      "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:stackoverflow.com)",
-      "WebFetch(domain:developer.mozilla.org)",
-      "WebFetch(domain:npmjs.com)",
-      "WebFetch(domain:nextjs.org)"
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true",
+    "ENABLE_EXPERIMENTAL_MCP_CLI": "false"
+  },
+  "enabledPlugins": {
+    "agent-sdk-dev@claude-code-plugins": true,
+    "context7-plugin@context7-marketplace": true,
+    "document-skills@anthropic-agent-skills": true,
+    "example-skills@anthropic-agent-skills": true,
+    "explanatory-output-style@claude-code-plugins": true,
+    "feature-dev@claude-code-plugins": true,
+    "frontend-design@claude-code-plugins": true,
+    "learning-output-style@claude-code-plugins": true,
+    "playwright-cli@playwright-cli": true,
+    "prompts.chat@prompts.chat": true,
+    "ralph-wiggum@claude-code-plugins": true,
+    "security-guidance@claude-code-plugins": true,
+    "code-review@claude-code-plugins": true,
+    "claude-opus-4-5-migration@claude-code-plugins": true,
+    "superpowers@superpowers-marketplace": true,
+    "double-shot-latte@superpowers-marketplace": true,
+    "elements-of-style@superpowers-marketplace": true,
+    "episodic-memory@superpowers-marketplace": true,
+    "figma@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "linear@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "posthog@claude-plugins-official": true,
+    "stripe@claude-plugins-official": true
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c \"open -g 'agentwatch://hook?type=prompt-submit&pid=$PPID&pwd=$(pwd | sed 's/ /%20/g')'\""
+          }
+        ]
+      }
     ],
-    "deny": [
-      "Bash(git push -f:*)",
-      "Bash(git push --force:*)"
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c \"TOOL_NAME=$(python3 -c 'import sys, json; data = json.load(sys.stdin); print(data.get(\\\"tool_name\\\", \\\"Unknown\\\"))'); open -g \\\"agentwatch://hook?type=tool-start&pid=$PPID&tool=$(echo \\\"$TOOL_NAME\\\" | sed 's/ /%20/g')\\\"\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c \"TOOL_NAME=$(python3 -c 'import sys, json; data = json.load(sys.stdin); print(data.get(\\\"tool_name\\\", \\\"Unknown\\\"))'); open -g \\\"agentwatch://hook?type=tool-complete&pid=$PPID&tool=$(echo \\\"$TOOL_NAME\\\" | sed 's/ /%20/g')\\\"\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c \"open -g 'agentwatch://hook?type=session-stop&pid=$PPID'\""
+          }
+        ]
+      }
     ]
   }
 }
